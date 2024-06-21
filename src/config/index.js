@@ -1,6 +1,8 @@
 export const TP_SERVER_ADDRESS = process.env.TP_SERVER_ADDRESS;
+// export const TP_SERVER_ADDRESS = process.env.TP_LOCAL_SERVER_ADDRESS;
 
 export const TP_TENANT_ADMIN_ID = process.env.TP_TENANT_ADMIN_ID;
+// export const TP_TENANT_ADMIN_ID = process.env.TP_LOCAL_TENANT_ID;
 export const TP_TENANT_ADMIN_PASSWORD = process.env.TP_TENANT_ADMIN_PASSWORD;
 
 export const TP_IFLOWHVAC_MANAGER_CUSTOMTER_ID =

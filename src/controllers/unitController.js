@@ -53,6 +53,7 @@ const getUnitInfoWithSerialNumber = async ({ serialNumber }) => {
         `/api/customer/${unitInfo.unitOwner.id.id}`
       );
       unitInfo.unitOwner = result.data;
+      console.log(result.data);
 
       if (unitInfo.unitOwner.email) {
         unitInfo.unitStatus.hasHomeOwner = "Y";
@@ -254,8 +255,8 @@ const assignHomeOwnerToContractor = async ({
 }) => {
   let homeOwnerCustomerInfo = { ...unitOwner };
   homeOwnerCustomerInfo.additionalInfo.parentCustomerId = contractorId;
-  homeOwnerCustomerInfo.name = username;
-  homeOwnerCustomerInfo.address = address;
+  // homeOwnerCustomerInfo.name = username;
+  // homeOwnerCustomerInfo.address = address;
 
   try {
     const result = await tpAxios.post("/api/customer", homeOwnerCustomerInfo);
@@ -350,7 +351,7 @@ export const registUnitHomeOwner = async (request, response) => {
     return response.status(500).send("Unit Has Home Owner Already!");
 
   if (unitOwner.id.id === TP_IFLOHVAC_UNREGISTERED_DEVICES_CUSTOMER_ID) {
-    unitOwner = await createHomeOwnerCustomerAndAssignToUnknownContractor({
+    unitOwner = await createHomeOwnerCustomerAndAssignToContractor({
       unitOwner,
       serialNumber,
       username,
@@ -359,7 +360,7 @@ export const registUnitHomeOwner = async (request, response) => {
       parentCustomerId: TP_IFLOWHVAC_UNKNOWN_CONTRACTOR_CUSTOMER_ID,
     });
   } else {
-    unitOwner = await createHomeOwnerCustomerAndAssignToUnknownContractor({
+    unitOwner = await createHomeOwnerCustomerAndAssignToContractor({
       unitOwner,
       serialNumber,
       username,
@@ -380,7 +381,7 @@ export const registUnitHomeOwner = async (request, response) => {
   return response.status(200).send("success");
 };
 
-const createHomeOwnerCustomerAndAssignToUnknownContractor = async ({
+const createHomeOwnerCustomerAndAssignToContractor = async ({
   unitOwner,
   serialNumber,
   username,
@@ -405,24 +406,25 @@ const createHomeOwnerCustomerAndAssignToUnknownContractor = async ({
 
   if (unitOwner.additionalInfo && parentCustomerId) {
     customerInfo = unitOwner;
-    unitOwner.title = serialNumber;
-    unitOwner.name = username;
-    unitOwner.address = currentUserInfo.address;
-    unitOwner.phone = currentUserInfo.phone;
-    unitOwner.email = currentUserInfo.email;
-    unitOwner.additionalInfo.parentCustomerId = parentCustomerId;
+    // unitOwner.title = serialNumber;
+    // unitOwner.name = username;
+    // unitOwner.address = currentUserInfo.address;
+    // unitOwner.phone = currentUserInfo.phone;
+    // unitOwner.email = currentUserInfo.email;
+    // unitOwner.additionalInfo.parentCustomerId = parentCustomerId;
+    customerInfo.additionalInfo.parentCustomerId = parentCustomerId;
   } else {
     customerInfo = {
-      title: serialNumber,
-      name: username,
-      address: currentUserInfo.address,
-      phone: currentUserInfo.phone,
-      email: currentUserInfo.email,
       additionalInfo: {
         parentCustomerId: parentCustomerId,
       },
     };
   }
+  customerInfo.title = serialNumber;
+  customerInfo.name = username;
+  customerInfo.address = currentUserInfo.address;
+  customerInfo.phone = currentUserInfo.phone;
+  customerInfo.email = currentUserInfo.email;
 
   let newHomeOwnerCustomerInfo;
 
